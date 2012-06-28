@@ -1,0 +1,8 @@
+{
+    "name": "bamarni/symfony-http-cache-doctrine-store",
+    "autoload": {
+        "psr-0": {
+            "Symfony": "src/"
+        }
+    }
+}
