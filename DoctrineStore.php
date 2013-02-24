@@ -1,29 +1,19 @@
 <?php
 
-/*
- * This file is part of the Symfony package.
- *
- * (c) Fabien Potencier <fabien@symfony.com>
- *
- * This code is partially based on the Rack-Cache library by Ryan Tomayko,
- * which is released under the MIT license.
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
-
-namespace Symfony\Component\HttpKernel\HttpCache;
+namespace Bamarni\HttpCache;
 
 use Doctrine\Common\Cache\Cache;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\HttpCache\StoreInterface;
 
 /**
  * Store implements all the logic for storing cache metadata (Request and Response headers).
  *
  * @author Fabien Potencier <fabien@symfony.com>
+ * @author Bilal Amarni <bilal.amarni@gmail.com>
  */
-class Store implements StoreInterface
+class DoctrineStore implements StoreInterface
 {
     private $driver;
     private $keyCache;
@@ -32,7 +22,7 @@ class Store implements StoreInterface
     /**
      * Constructor.
      *
-     * @param string $root The path to the cache directory
+     * @param string $driver A configured doctrine cache driver.
      */
     public function __construct(Cache $driver)
     {
@@ -69,23 +59,34 @@ class Store implements StoreInterface
      */
     public function lock(Request $request)
     {
-        if (false !== $lock = $this->driver->save($cacheKey = $this->getCacheKey($request).'.lck', 'lock')) {
-            $this->locks[] = $cacheKey;
+        $key = $this->getCacheKey($request).'.lck';
+
+        if (false !== $this->driver->save($key, '1')) {
+            $this->locks[] = $key;
 
             return true;
         }
 
-        return $path;
+        return !$this->driver->contains($key) ?: $key;
     }
 
     /**
      * Releases the lock for the given Request.
      *
      * @param Request $request A Request instance
+     *
+     * @return Boolean False if the lock file does not exist or cannot be unlocked, true otherwise
      */
     public function unlock(Request $request)
     {
-        return $this->driver->delete($this->getCacheKey($request).'.lck');
+        $key = $this->getCacheKey($request).'.lck';
+
+        return $this->driver->contains($key) ? $this->driver->delete($key) : false;
+    }
+
+    public function isLocked(Request $request)
+    {
+        return $this->driver->contains($this->getCacheKey($request).'.lck');
     }
 
     /**
@@ -118,7 +119,7 @@ class Store implements StoreInterface
         }
 
         list($req, $headers) = $match;
-        if ($this->driver->contains($body = $headers['x-content-digest'][0])) {
+        if ($body = $this->driver->fetch($headers['x-content-digest'][0])) {
             return $this->restoreResponse($headers, $body);
         }
 
@@ -138,6 +139,8 @@ class Store implements StoreInterface
      * @param Response $response A Response instance
      *
      * @return string The key under which the response is stored
+     *
+     * @throws \RuntimeException
      */
     public function write(Request $request, Response $response)
     {
@@ -146,7 +149,7 @@ class Store implements StoreInterface
 
         // write the response body to the entity store if this is the original response
         if (!$response->headers->has('X-Content-Digest')) {
-            $digest = 'en'.sha1($response->getContent());
+            $digest = $this->generateContentDigest($response);
 
             if (false === $this->save($digest, $response->getContent())) {
                 throw new \RuntimeException('Unable to store the entity.');
@@ -185,9 +188,23 @@ class Store implements StoreInterface
     }
 
     /**
+     * Returns content digest for $response.
+     *
+     * @param Response $response
+     *
+     * @return string
+     */
+    protected function generateContentDigest(Response $response)
+    {
+        return 'en'.sha1($response->getContent());
+    }
+
+    /**
      * Invalidates all cache entries that match the request.
      *
      * @param Request $request A Request instance
+     *
+     * @throws \RuntimeException
      */
     public function invalidate(Request $request)
     {
@@ -293,7 +310,7 @@ class Store implements StoreInterface
      *
      * @return string The data associated with the key
      */
-    private function load($key)
+    public function load($key)
     {
         return $this->driver->contains($key) ? $this->driver->fetch($key) : false;
     }
@@ -303,6 +320,8 @@ class Store implements StoreInterface
      *
      * @param string $key  The store key
      * @param string $data The data to store
+     *
+     * @return Boolean
      */
     private function save($key, $data)
     {
@@ -361,15 +380,13 @@ class Store implements StoreInterface
      *
      * @param array  $headers An array of HTTP headers for the Response
      * @param string $body    The Response body
+     *
+     * @return Response
      */
     private function restoreResponse($headers, $body = null)
     {
         $status = $headers['X-Status'][0];
         unset($headers['X-Status']);
-
-        if (null !== $body) {
-            $headers['X-Body-File'] = array($body);
-        }
 
         return new Response($body, $status, $headers);
     }

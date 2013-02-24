@@ -1,8 +1,16 @@
 {
     "name": "bamarni/symfony-http-cache-doctrine-store",
+    "require": {
+        "php": ">=5.3.2",
+        "symfony/http-kernel": "2.*"
+    },
+    "suggest": {
+        "symfony/framework-bundle": "For integration with the framework"
+    },
     "autoload": {
         "psr-0": {
-            "Symfony": "src/"
+            "Bamarni\HttpCache": ""
         }
-    }
+    },
+    "target-dir": "Bamarni/HttpCache"
 }
