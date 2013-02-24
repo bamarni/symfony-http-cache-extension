@@ -9,7 +9,7 @@
     },
     "autoload": {
         "psr-0": {
-            "Bamarni\HttpCache": ""
+            "Bamarni\\HttpCache": ""
         }
     },
     "target-dir": "Bamarni/HttpCache"
