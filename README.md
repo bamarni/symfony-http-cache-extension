@@ -25,8 +25,6 @@ Configure a Doctrine Cache driver and pass it to a DoctrineStore :
 <?php
 // app/AppCache.php
 
-<?php
-
 use Bamarni\HttpCache\DoctrineStore;
 //use Doctrine\Common\Cache\ApcCache;
 use Doctrine\Common\Cache\MemcacheCache;
