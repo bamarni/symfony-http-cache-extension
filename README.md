@@ -2,7 +2,7 @@
 
 Store implementation for Symfony HttpCache relying on Doctrine Cache.
 
-## Installation
+## Instructions
 
 ### Install the package
 
@@ -17,7 +17,7 @@ Add the following dependency to your composer.json file:
 }
 ```
 
-### Step 2: Edit your project's HttpCache
+### Edit your project's HttpCache
 
 Configure a Doctrine Cache driver and pass it to a DoctrineStore :
 
