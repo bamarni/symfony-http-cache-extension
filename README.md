@@ -1,4 +1,8 @@
-#Http Cache Doctrine Store
+# EXPERIMENTAL (WIP)
+
+Some stores + custom http_cache
+
+# Http Cache Doctrine Store
 
 Store implementation for Symfony HttpCache relying on Doctrine Cache.
 
@@ -12,7 +16,7 @@ Add the following dependency to your composer.json file:
     "require": {
         "_some_packages": "...",
 
-        "bamarni/symfony-http-cache-doctrine-store": "*"
+        "bamarni/symfony-http-cache-extension": "*"
     }
 }
 ```
@@ -25,7 +29,7 @@ Configure a Doctrine Cache driver and pass it to a DoctrineStore :
 <?php
 // app/AppCache.php
 
-use Bamarni\HttpCache\DoctrineStore;
+use Bamarni\HttpCache\Store\DoctrineStore;
 //use Doctrine\Common\Cache\ApcCache;
 use Doctrine\Common\Cache\MemcacheCache;
 use Symfony\Bundle\FrameworkBundle\HttpCache\HttpCache;

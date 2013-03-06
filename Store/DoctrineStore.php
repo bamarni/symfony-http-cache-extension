@@ -1,6 +1,6 @@
 <?php
 
-namespace Bamarni\HttpCache;
+namespace Bamarni\HttpCache\Store;
 
 use Doctrine\Common\Cache\Cache;
 use Symfony\Component\HttpFoundation\Request;
@@ -8,7 +8,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\HttpCache\StoreInterface;
 
 /**
- * Store implements all the logic for storing cache metadata (Request and Response headers).
+ * Store relying on Doctrine Cache.
  *
  * @author Fabien Potencier <fabien@symfony.com>
  * @author Bilal Amarni <bilal.amarni@gmail.com>
@@ -323,7 +323,7 @@ class DoctrineStore implements StoreInterface
      *
      * @return Boolean
      */
-    private function save($key, $data)
+    public function save($key, $data)
     {
         $this->driver->save($key, $data);
 

@@ -1,5 +1,5 @@
 {
-    "name": "bamarni/symfony-http-cache-doctrine-store",
+    "name": "bamarni/symfony-http-cache-extension",
     "require": {
         "php": ">=5.3.2",
         "doctrine/cache": "1.*",
