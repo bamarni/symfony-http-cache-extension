@@ -1,3 +1,5 @@
+[![Build Status](https://secure.travis-ci.org/bamarni/symfony-http-cache-extension.png)](https://travis-ci.org/bamarni/symfony-http-cache-extension)
+
 # EXPERIMENTAL (WIP)
 
 Some stores + custom http_cache
