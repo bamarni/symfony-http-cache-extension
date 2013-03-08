@@ -5,6 +5,10 @@
         "doctrine/cache": "1.*",
         "symfony/http-kernel": "2.*"
     },
+    "require-dev": {
+        "symfony/config": "2.*",
+        "symfony/dependency-injection": "2.*"
+    },
     "suggest": {
         "symfony/framework-bundle": "For integration with the framework"
     },

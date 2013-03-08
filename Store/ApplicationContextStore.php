@@ -13,7 +13,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class ApplicationContextStore extends DoctrineStore implements ContainerAwareInterface
 {
     protected $container;
-
+    
     public function setContainer(ContainerInterface $container = null)
     {
         $this->container = $container;
@@ -24,7 +24,7 @@ class ApplicationContextStore extends DoctrineStore implements ContainerAwareInt
         $securityContext = $this->container->get('security.context');
         
         if (null === $securityContext->getToken()) {
-            return null;
+            return 0;
         }
         
         return intval($securityContext->isGranted('IS_AUTHENTICATED_REMEMBERED'));
