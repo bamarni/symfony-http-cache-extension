@@ -3,21 +3,22 @@
 namespace Bamarni\HttpCache;
 
 use Parizz\MainBundle\HttpCache\Esi;
-use Symfony\Bundle\FrameworkBundle\HttpCache\HttpCache;
+use Symfony\Bundle\FrameworkBundle\HttpCache\HttpCache as BaseHttpCache;
 use Bamarni\HttpCache\Store\ApplicationContextStore;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 
-class HttpCache extends HttpCache
+class HttpCache extends BaseHttpCache
 {
     protected $store;
 
     public function __construct(HttpKernelInterface $kernel, $cacheDir = null)
     {
+        $this->kernel = $kernel;
         $this->store = $this->createStore();
 
-        parent::__construct($kernel, $this->store, $this->createEsi(), array_merge(array('debug' => $kernel->isDebug()), $this->getOptions()));
+        parent::__construct($kernel, $cacheDir);
     }
 
     protected function createEsi()

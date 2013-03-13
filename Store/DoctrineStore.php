@@ -294,13 +294,19 @@ class DoctrineStore implements StoreInterface
      */
     public function purge($url)
     {
-        if ($this->driver->contains($key = $this->getCacheKey(Request::create($url)))) {
-            $this->driver->delete($key);
-
-            return true;
+        $key = $this->getCacheKey(Request::create($url));
+        if (!$this->driver->contains($key)) {
+            return false;
         }
 
-        return false;
+        foreach ($this->getMetadata($key) as $entry) {
+            $response = $this->restoreResponse($entry[1]);
+            $success = $this->driver->delete($response->headers->get('X-Content-Digest'));
+        }
+
+        $success = $this->driver->delete($key);
+
+        return $success;
     }
 
     /**
