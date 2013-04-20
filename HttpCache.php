@@ -2,7 +2,7 @@
 
 namespace Bamarni\HttpCache;
 
-use Parizz\MainBundle\HttpCache\Esi;
+use Bamarni\HttpCache\Esi\Esi;
 use Symfony\Bundle\FrameworkBundle\HttpCache\HttpCache as BaseHttpCache;
 use Bamarni\HttpCache\Store\ApplicationContextStore;
 use Symfony\Component\HttpFoundation\Request;
