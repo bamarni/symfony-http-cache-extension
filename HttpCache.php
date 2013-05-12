@@ -2,7 +2,6 @@
 
 namespace Bamarni\HttpCache;
 
-use Bamarni\HttpCache\Esi\Esi;
 use Symfony\Bundle\FrameworkBundle\HttpCache\HttpCache as BaseHttpCache;
 use Bamarni\HttpCache\Store\ApplicationContextStore;
 use Symfony\Component\HttpFoundation\Request;
@@ -19,11 +18,6 @@ class HttpCache extends BaseHttpCache
         $this->store = $this->createStore();
 
         parent::__construct($kernel, $cacheDir);
-    }
-
-    protected function createEsi()
-    {
-        return new Esi();
     }
 
     public function handle(Request $request, $type = HttpKernelInterface::MASTER_REQUEST, $catch = true)
